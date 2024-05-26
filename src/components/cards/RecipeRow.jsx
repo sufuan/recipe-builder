@@ -1,3 +1,4 @@
+import axios from "axios";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -6,18 +7,20 @@ import { toast } from "react-toastify";
 export default function RecipeRow({ recipe }) {
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     const shouldDelete = window.confirm(
       "Are you sure you want to delete this recipe?"
     );
     if (shouldDelete) {
-      // Simulate deletion with a timeout
-      setIsDeleting(true);
-      setTimeout(() => {
-        // Here you would delete the recipe using an API call
+      try {
+        setIsDeleting(true);
+        await axios.delete(`http://localhost:3000/recipes/${recipe.id}`);
         toast.success("Recipe deleted successfully!");
         setIsDeleting(false);
-      }, 1000);
+      } catch (error) {
+        console.error("Error deleting recipe:", error);
+        setIsDeleting(false);
+      }
     }
   };
 
