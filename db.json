@@ -2,9 +2,9 @@
   "recipes": [
     {
       "id": "1",
-      "title": "Spaghetti Carbonara 2",
-      "price": 12.99,
-      "description": "A classic Italian pasta dish made with eggs, cheese, pancetta, and pepper.",
+      "title": "Spaghetti Carbonara w",
+      "price": "12.99",
+      "description": "A classic Italian pasta dish made with eggs, cheese, pancetta, and pepper. ",
       "image": "https://example.com/images/spaghetti-carbonara.jpg",
       "category": "Thai"
     },
@@ -125,6 +125,20 @@
       "price": "121",
       "category": "Mexican",
       "description": "test descittion"
+    },
+    {
+      "id": "16",
+      "title": "hllo",
+      "price": "4",
+      "category": "Italian",
+      "description": "4"
+    },
+    {
+      "id": "16",
+      "title": "14",
+      "price": "3",
+      "category": "Italian",
+      "description": "sdf"
     }
   ],
   "categories": [
@@ -170,5 +184,3 @@
     }
   ]
 }
-
-
