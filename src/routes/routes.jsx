@@ -7,9 +7,13 @@ import Login from "../pages/Login";
 import Register from "../pages/Register";
 import PrivateRoute from "./PrivateRoute";
 import DashboardHome from "../pages/dashboard/DashboardHome";
-import ManageAllRecipe from "../pages/dashboard/ManageAllRecipe";
-import AddRecipe from "../pages/dashboard/AddRecipe";
-import EditRecipe from "../pages/dashboard/EditRecipe";
+import AddPost from "../pages/dashboard/AddPost";
+import Profile from "../pages/dashboard/Profile";
+import Blogs from "../pages/Blogs";
+import EditProfile from "../pages/dashboard/EditProfile";
+import Contact from "../pages/Contact";
+import BlogDetails from "../pages/BlogDetails";
+import ManageAllPost from "../pages/dashboard/ManageAllPost";
 
 export const router = createBrowserRouter([
   {
@@ -21,8 +25,20 @@ export const router = createBrowserRouter([
         element: <Home />,
       },
       {
+        path: "blogs",
+        element: <Blogs />,
+      },
+      {
+        path: "blog/:id",
+        element: <BlogDetails />,
+      },
+      {
         path: "about",
         element: <About />,
+      },
+      {
+        path: "contact",
+        element: <Contact />,
       },
     ],
   },
@@ -35,7 +51,7 @@ export const router = createBrowserRouter([
     element: <Register />,
   },
   {
-    path: "/dashboard",
+    path: "dashboard",
     element: (
       <PrivateRoute>
         <DashbaordLayout />
@@ -43,20 +59,44 @@ export const router = createBrowserRouter([
     ),
     children: [
       {
-        index: true,
-        element: <DashboardHome />,
+        path: "",
+        element: (
+          <PrivateRoute>
+            <DashboardHome />
+          </PrivateRoute>
+        ),
       },
       {
-        path: "manage-recipes",
-        element: <ManageAllRecipe />,
+        path: "edit-profile/:id",
+        element: (
+          <PrivateRoute>
+            <EditProfile />
+          </PrivateRoute>
+        ),
       },
       {
-        path: "add-recipe",
-        element: <AddRecipe />,
+        path: "profile/",
+        element: (
+          <PrivateRoute>
+            <Profile />
+          </PrivateRoute>
+        ),
       },
       {
-        path: "edit-recipe/:id",
-        element: <EditRecipe />,
+        path: "manage-my-post/:userId",
+        element: (
+          <PrivateRoute>
+            <ManageAllPost />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "add-post/:userId",
+        element: (
+          <PrivateRoute>
+            <AddPost />
+          </PrivateRoute>
+        ),
       },
     ],
   },

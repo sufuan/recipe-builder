@@ -1,32 +1,26 @@
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import Banner from "../components/home/Banner";
-import { useState } from "react";
-import RecepiCard from "../components/cards/RecepiCard";
-import CategoryCard from "../components/cards/CategoryCard";
+import PostCard from "../components/cards/PostCard";
 import Skeleton from "../components/cards/Skeleton";
+import { Link } from "react-router-dom";
+import Sponser from "../components/home/Sponser";
+import Newsletter from "../components/home/NewsLetter";
+import Testimonial from "../components/home/Testimonials";
 
 export default function Home() {
-  const [recipes, setRescipes] = useState();
-  const [categoris, setCategories] = useState();
+  const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+
   useEffect(() => {
     async function load() {
-      //get recipies
-      const recipeRes = await fetch("http://localhost:3000/recipes");
-      const recipeData = await recipeRes.json();
-      setRescipes(recipeData);
-      //get categories
-
-      const categoryRes = await fetch("http://localhost:3000/categories");
-      const categoryData = await categoryRes.json();
-
-      setCategories(categoryData);
+      const postRes = await fetch(
+        "https://project-stride-blog-server-e6o9.vercel.app/api/posts"
+      );
+      const postData = await postRes.json();
+      setPosts(postData);
     }
     load();
-
-    // fetch("http://localhost:3000/categories")
-    //   .then((res) => res.json())
-    //   .then((data) => setCategories(data));
   }, []);
 
   useEffect(() => {
@@ -34,36 +28,45 @@ export default function Home() {
     setTimeout(() => {
       setLoading(false);
     }, 1000);
-  }, []);
+  }, [posts]);
+
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const filteredPosts = posts.filter((post) =>
+    post.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <div>
-      <Banner />
+      <Banner searchQuery={searchQuery} onSearchChange={handleSearchChange} />
 
       <div className="mx-16">
-        <h1 className="text-4xl my-20 text-center">Our Recipe Categories </h1>
-        <div className="flex gap-4">
-          {categoris?.map((category) => (
-            <CategoryCard key={category?.id} category={category} />
-          ))}
-        </div>
-      </div>
+        <h1 className="text-4xl my-6 text-center">Our Newest Post</h1>
+        <Link
+          to={`/blogs/`}
+          className="text-blue-500 hover:underline block text-right my-6"
+        >
+          View all posts
+        </Link>
 
-      <div className="mx-16">
-        <h1 className="text-4xl my-20 text-center">Our Newest Recipes </h1>
         <div className="grid grid-cols-4 gap-6">
-          {recipes
-            ?.reverse()
-            ?.slice(0, 4)
-            ?.map((recipe) =>
-              loading ? (
-                <Skeleton key={recipe._id} />
-              ) : (
-                <RecepiCard key={recipe?.id} recipe={recipe} />
-              )
-            )}
+          {loading
+            ? Array(4)
+                .fill(0)
+                .map((_, index) => <Skeleton key={index} />)
+            : filteredPosts
+                .reverse()
+                .slice(0, 4)
+                .map((post) => <PostCard key={post._id} post={post} />)}
         </div>
       </div>
+
+      <Sponser />
+      <Testimonial></Testimonial>
+
+      <Newsletter />
     </div>
   );
 }

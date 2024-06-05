@@ -1,13 +1,30 @@
-import { useSignOut } from "react-firebase-hooks/auth";
+import { useAuthState, useSignOut } from "react-firebase-hooks/auth";
 import { auth } from "../firebase/firebase.config";
 import { Link, Outlet } from "react-router-dom";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 export default function DashbaordLayout() {
   const [signOut] = useSignOut(auth);
+  const [user] = useAuthState(auth);
+  const [userInfo, setUserInfo] = useState({});
+
+  useEffect(() => {
+    if (user) {
+      axios
+        .get(
+          `https://project-stride-blog-server-e6o9.vercel.app/api/users/${user?.email}`
+        )
+        .then((data) => setUserInfo(data?.data?.user));
+    }
+  }, [user]);
+
+  console.log(userInfo._id);
 
   const handleLogout = async () => {
     await signOut();
   };
+
   return (
     <div className="drawer lg:drawer-open">
       <input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
@@ -30,10 +47,17 @@ export default function DashbaordLayout() {
           {/* Sidebar content here */}
           <div>
             <li>
-              <Link to={"/dashboard/manage-recipes"}>Mangae All Recipes</Link>
+              <Link to={`/dashboard/manage-my-post/${userInfo._id}`}>
+                Manage My Post
+              </Link>
             </li>
             <li>
-              <Link to={"/dashboard/add-recipe"}>Add Recipe</Link>
+              <Link to={`/dashboard/add-post/${userInfo._id}`}>
+                Create Post
+              </Link>
+            </li>
+            <li>
+              <Link to={"/dashboard/profile"}>Profile</Link>
             </li>
           </div>
           <div className="flex gap-4">

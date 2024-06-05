@@ -1,12 +1,13 @@
 import { Link, useNavigate } from "react-router-dom";
-
-import GoogleLogin from "../components/Auth/GoogleLogin";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase/firebase.config";
+import GoogleLogin from "../components/Auth/GoogleLogin";
 
 export default function Login() {
   const [user, loading] = useAuthState(auth);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
   let from = location.state?.from?.pathname || "/";
 
@@ -15,6 +16,25 @@ export default function Login() {
       navigate(from, { replace: true });
     }
   }, [user, loading, navigate, from]);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const email = form.email.value;
+    const password = form.password.value;
+
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        const user = userCredential.user;
+        console.log("User logged in:", user);
+        navigate(from, { replace: true });
+      })
+      .catch((error) => {
+        console.error("Error logging in:", error);
+        setError(error.message);
+      });
+  };
+
   return (
     <div className="hero min-h-screen bg-base-200">
       <div className="hero-content grid lg:grid-cols-2">
@@ -29,13 +49,15 @@ export default function Login() {
         </div>
         <div className="flex justify-end">
           <div className="card shrink-0 w-full max-w-md shadow-2xl bg-base-100">
-            <form className="card-body">
+            <form className="card-body" onSubmit={handleSubmit}>
+              {error && <p className="text-red-500">{error}</p>}
               <div className="form-control">
                 <label className="label">
                   <span className="label-text">Email</span>
                 </label>
                 <input
                   type="email"
+                  name="email"
                   placeholder="email"
                   className="input input-bordered"
                   required
@@ -47,6 +69,7 @@ export default function Login() {
                 </label>
                 <input
                   type="password"
+                  name="password"
                   placeholder="password"
                   className="input input-bordered"
                   required
@@ -62,13 +85,13 @@ export default function Login() {
               </div>
 
               <p className="text-center">
-                Don&apos;t have any account ?{" "}
-                <Link to={"/register"} className="text-orange-500">
+                Don&apos;t have an account?{" "}
+                <Link to={"/signup"} className="text-orange-500">
                   Register
                 </Link>
               </p>
             </form>
-            <div className="  w-full ">
+            <div className="w-full">
               <div className="flex flex-col gap-2 mx-7 mb-7">
                 <GoogleLogin />
               </div>
